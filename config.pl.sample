@@ -1,0 +1,21 @@
+# Configuration
+
+# Debug? Print stats
+$debug = 1;
+
+# Set to 1 to enable Graphite, anything else disables Graphite
+$graphite_enable = 0;
+
+# The Graphite host to send data to on port 2003
+our $graphite_host = 'test.example.com';
+
+# The Graphite path to put data under
+$graphite_path = 'power';
+
+# The Lists of hosts to poll
+%hostlist = (
+	hosta => 'foo',
+	hostb => 'bar',
+);
+
+1;
