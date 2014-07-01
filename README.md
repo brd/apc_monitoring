@@ -1,7 +1,9 @@
 apc_monitoring
 ==============
 
-Perl tools to get data into Nagios/Graphite
+Perl tools to get APC PDU / UPS data into Nagios/Graphite.
+
+Tested with the following PDUs: AP8941, AP7921, AP7941 and a Symmetra LX UPS.
 
 Basic usage:
 
