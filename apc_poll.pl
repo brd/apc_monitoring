@@ -26,13 +26,13 @@ elsif($args == 1) {
 		usage();
 	}
 }
-elsif($args == 4 || $args == 5) {
+elsif($args == 2 || $args == 3) {
 	if($ARGV[0] eq "nagios") {
-		if ($args == 4) {
-			nagios(4, $ARGV[1], $ARGV[2], $ARGV[3]);
+		if ($args == 2) {
+			nagios(2, $ARGV[1]);
 		}
-		elsif($args == 5) {
-			nagios(5, $ARGV[1], $ARGV[2], $ARGV[3], $ARGV[4]);
+		elsif($args == 3) {
+			nagios(3, $ARGV[1], $ARGV[2]);
 		}
 		else {
 			usage();
@@ -62,11 +62,13 @@ sub snmppoll {
 	 my %snmpresults;
 
 	 # OIDs for the PDUs
-	 my $num_banks_oid = ".1.3.6.1.4.1.318.1.1.12.2.1.4.0";
-	 my $phase_power_oid  = ".1.3.6.1.4.1.318.1.1.12.1.16.0";
-	 my $phase_current_oid = ".1.3.6.1.4.1.318.1.1.12.2.3.1.1.2.1";
-	 my $bank1_oid = ".1.3.6.1.4.1.318.1.1.12.2.3.1.1.2.2";
-	 my $bank2_oid = ".1.3.6.1.4.1.318.1.1.12.2.3.1.1.2.3";
+	 my $num_banks_oid = '.1.3.6.1.4.1.318.1.1.12.2.1.4.0';
+	 my $phase_power_oid  = '.1.3.6.1.4.1.318.1.1.12.1.16.0';
+	 my $phase_current_oid = '.1.3.6.1.4.1.318.1.1.12.2.3.1.1.2.1';
+	 my $bank1_oid = '.1.3.6.1.4.1.318.1.1.12.2.3.1.1.2.2';
+	 my $bank2_oid = '.1.3.6.1.4.1.318.1.1.12.2.3.1.1.2.3';
+	 my $phase_nearoverload_oid = '.1.3.6.1.4.1.318.1.1.12.2.2.1.1.4.1';
+	 my $phase_overload_oid = '.1.3.6.1.4.1.318.1.1.12.2.2.1.1.3.1';
 
 	 say "snmppoll(): host: $host, community: \"$community\"";
 
@@ -83,10 +85,16 @@ sub snmppoll {
 		say "banks = 0; ap7921";
 	 	my $phase_power = $session->get_request("$phase_power_oid")     or warn "failed to poll phase power on $host: $!";
 	 	my $phase_current = $session->get_request("$phase_current_oid") or warn "failed to poll phase current on $host: $!";
-		$snmpresults{$host}{$phasepower} = $phase_power->{$phase_power_oid};
-		$snmpresults{$host}{$phasecurrent} = $phase_current->{$phase_current_oid} / 10;
+		my $nearoverload = $session->get_request($phase_nearoverload_oid) or warn "failed to poll near overload on $host: $!";
+		my $overload = $session->get_request($phase_overload_oid) or warn "failed to poll overload on $host: $!";
+		$snmpresults{$host}{'phasepower'} = $phase_power->{$phase_power_oid};
+		$snmpresults{$host}{'phasecurrent'} = $phase_current->{$phase_current_oid} / 10;
+		$snmpresults{$host}{'nearoverload'} = $nearoverload->{$phase_nearoverload_oid};
+		$snmpresults{$host}{'overload'} = $overload->{$phase_overload_oid};
 	 	say "phase power is: " . $phase_power->{$phase_power_oid};
 	 	say "phase current is: " . $phase_current->{$phase_current_oid} / 10;
+		say "near overload is: " . $nearoverload->{$phase_nearoverload_oid};
+		say "overload is: " . $overload->{$phase_overload_oid};
 	 }
 	 elsif($num_banks->{$num_banks_oid} eq 2) {
 	 	# AP8941
@@ -95,10 +103,20 @@ sub snmppoll {
 	 	my $phase_current = $session->get_request("$phase_current_oid") or warn "failed to poll phase current on $host: $!";
 	 	my $bank1_current = $session->get_request("$bank1_oid")	 or warn "failed to poll bank1 current on $host: $!";
 	 	my $bank2_current = $session->get_request("$bank2_oid")	 or warn "failed to poll bank2 current on $host: $!";
+		my $nearoverload = $session->get_request($phase_nearoverload_oid) or warn "failed to poll near overload on $host: $!";
+		my $overload = $session->get_request($phase_overload_oid) or warn "failed to poll overload on $host: $!";
+		$snmpresults{$host}{'phasepower'} = $phase_power->{$phase_power_oid};
+		$snmpresults{$host}{'phasecurrent'} = $phase_current->{$phase_current_oid} / 10;
+		$snmpresults{$host}{'bank1current'} = $bank1_current->{$bank1_oid} / 10;
+		$snmpresults{$host}{'bank2current'} = $bank2_current->{$bank2_oid} / 10;
+		$snmpresults{$host}{'nearoverload'} = $nearoverload->{$phase_nearoverload_oid};
+		$snmpresults{$host}{'overload'} = $overload->{$phase_overload_oid};
 	 	say "phase power is: " . $phase_power->{$phase_power_oid};
 	 	say "phase current is: " . $phase_current->{$phase_current_oid} / 10;
 	 	say "bank1 current is: " . $bank1_current->{$bank1_oid} / 10;
 	 	say "bank2 current is: " . $bank2_current->{$bank2_oid} / 10;
+	 	say "near overload is: " . $nearoverload->{$phase_nearoverload_oid};
+	 	say "overload is: " . $overload->{$phase_overload_oid};
 	 }
 	 else {
 	 	say "banks unknown";
@@ -112,16 +130,22 @@ sub snmppoll {
 
 sub nagios {
 
-	 my ($numofargs, $host, $community, $warn, $crit) = @_;
-	 my $session = snmppoll($host, $community);
+	 my ($numofargs, $host, $community) = @_;
+	 my %snmpresults = snmppoll($host, $community);
 
-	 # check rPDULoadStatusLoadState and warn if phaseLoadNearOverload(3) and crit if phaseLoadOverload(4)
-	 #if ($phase_current > 30) {
-	 	# XXX: Add missing check to see if phase current is greater than 60%
-	 #}
-	 # Print the nicely formatted Nagios line
-	 say "";
-	 exit
+	 # Check if overload or near overload
+	 if ($snmpresults{$host}{'phasecurrent'} > $snmpresults{$host}{'overload'}) {
+		say "LOAD CRITICAL - " . $snmpresults{$host}{'phasecurrent'} . "A > " . $snmpresults{$host}{'overload'} . "A";
+		exit 2;
+	 }
+	 elsif ($snmpresults{$host}{'phasecurrent'} > $snmpresults{$host}{'nearoverload'}) {
+		say "LOAD WARNING - " . $snmpresults{$host}{'phasecurrent'} . "A > " . $snmpresults{$host}{'nearoverload'} . "A";
+		exit 1;
+	 }
+	 else {
+		say "LOAD OK - " . $snmpresults{$host}{'phasecurrent'} . "A < " . $snmpresults{$host}{'nearoverload'} . "A";
+		exit 0;
+	 }
 }
 
 
