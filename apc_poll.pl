@@ -135,15 +135,15 @@ sub nagios {
 
 	 # Check if overload or near overload
 	 if ($snmpresults{$host}{'phasecurrent'} > $snmpresults{$host}{'overload'}) {
-		say "LOAD CRITICAL - " . $snmpresults{$host}{'phasecurrent'} . "A > " . $snmpresults{$host}{'overload'} . "A";
+		say "LOAD CRITICAL - Current: " . $snmpresults{$host}{'phasecurrent'} . "A > Overload: " . $snmpresults{$host}{'overload'} . "A";
 		exit 2;
 	 }
 	 elsif ($snmpresults{$host}{'phasecurrent'} > $snmpresults{$host}{'nearoverload'}) {
-		say "LOAD WARNING - " . $snmpresults{$host}{'phasecurrent'} . "A > " . $snmpresults{$host}{'nearoverload'} . "A";
+		say "LOAD WARNING - Current: " . $snmpresults{$host}{'phasecurrent'} . "A > NearOverload: " . $snmpresults{$host}{'nearoverload'} . "A";
 		exit 1;
 	 }
 	 else {
-		say "LOAD OK - " . $snmpresults{$host}{'phasecurrent'} . "A < " . $snmpresults{$host}{'nearoverload'} . "A";
+		say "LOAD OK - Current: " . $snmpresults{$host}{'phasecurrent'} . "A < NearOverload: " . $snmpresults{$host}{'nearoverload'} . "A";
 		exit 0;
 	 }
 }
