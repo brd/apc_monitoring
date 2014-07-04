@@ -14,8 +14,8 @@ $graphite_path = 'power';
 
 # The Lists of hosts to poll
 %hostlist = (
-	"hosta.example.com" => { community => 'foo' },
-	"hostb.example.com" => { community => 'bar' },
+    "hosta.example.com" => { community => 'foo' },
+    "hostb.example.com" => { community => 'bar' },
 );
 
 1;
