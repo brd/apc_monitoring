@@ -61,27 +61,46 @@ sub snmppoll {
     my %snmpresults;
 
     # OIDs for the PDUs
-    my $pdu_model_oid          = '.1.3.6.1.4.1.318.1.1.4.1.4.0';
-    my $num_banks_oid          = '.1.3.6.1.4.1.318.1.1.12.2.1.4.0';
-    my $phase_power_oid        = '.1.3.6.1.4.1.318.1.1.12.1.16.0';
-    my $phase_current_oid      = '.1.3.6.1.4.1.318.1.1.12.2.3.1.1.2.1';
-    my $bank1_oid              = '.1.3.6.1.4.1.318.1.1.12.2.3.1.1.2.2';
-    my $bank2_oid              = '.1.3.6.1.4.1.318.1.1.12.2.3.1.1.2.3';
+    # PowerNet-MIB::sPDUIdentModelNumber.0
+    my $pdu_model_oid = '.1.3.6.1.4.1.318.1.1.4.1.4.0';
+    # PowerNet-MIB::rPDULoadDevNumBanks.0
+    my $num_banks_oid = '.1.3.6.1.4.1.318.1.1.12.2.1.4.0';
+    # PowerNet-MIB::rPDUIdentDevicePowerWatts.0
+    my $phase_power_oid = '.1.3.6.1.4.1.318.1.1.12.1.16.0';
+    # PowerNet-MIB::rPDULoadStatusLoad.1
+    my $phase_current_oid = '.1.3.6.1.4.1.318.1.1.12.2.3.1.1.2.1';
+    # PowerNet-MIB::rPDULoadStatusLoad.2
+    my $bank1_oid = '.1.3.6.1.4.1.318.1.1.12.2.3.1.1.2.2';
+    # PowerNet-MIB::rPDULoadStatusLoad.3
+    my $bank2_oid = '.1.3.6.1.4.1.318.1.1.12.2.3.1.1.2.3';
+    # PowerNet-MIB::rPDULoadPhaseConfigOverloadThreshold.phase1
     my $phase_nearoverload_oid = '.1.3.6.1.4.1.318.1.1.12.2.2.1.1.4.1';
-    my $phase_overload_oid     = '.1.3.6.1.4.1.318.1.1.12.2.2.1.1.3.1';
+    # PowerNet-MIB::rPDULoadPhaseConfigNearOverloadThreshold.phase1
+    my $phase_overload_oid = '.1.3.6.1.4.1.318.1.1.12.2.2.1.1.3.1';
 
     # OIDs for the UPS
-    my $ups_model_oid         = '.1.3.6.1.4.1.318.1.1.1.1.1.1.0';
-    my $ups_runtime_oid       = '.1.3.6.1.4.1.318.1.1.1.2.2.3.0';
+    # PowerNet-MIB::upsBasicIdentModel.0
+    my $ups_model_oid = '.1.3.6.1.4.1.318.1.1.1.1.1.1.0';
+    # PowerNet-MIB::upsAdvBatteryRunTimeRemaining.0
+    my $ups_runtime_oid = '.1.3.6.1.4.1.318.1.1.1.2.2.3.0';
+    # PowerNet-MIB::upsAdvConfigAlarmRuntimeUnder.0
     my $ups_lowbatruntime_oid = '.1.3.6.1.4.1.318.1.1.1.5.2.23.0';
-    my $ups_battstatus_oid    = '.1.3.6.1.4.1.318.1.1.1.2.1.1.0';
-    my $ups_battcapacity_oid  = '.1.3.6.1.4.1.318.1.1.1.2.2.1.0';
-    my $ups_battvoltage_oid   = '.1.3.6.1.4.1.318.1.1.1.2.2.8.0';
-    my $ups_inputvoltage_oid  = '.1.3.6.1.4.1.318.1.1.1.3.2.1.0';
+    # PowerNet-MIB::upsBasicBatteryStatus.0
+    my $ups_battstatus_oid = '.1.3.6.1.4.1.318.1.1.1.2.1.1.0';
+    # PowerNet-MIB::upsAdvBatteryCapacity.0
+    my $ups_battcapacity_oid = '.1.3.6.1.4.1.318.1.1.1.2.2.1.0';
+    # PowerNet-MIB::upsAdvBatteryActualVoltage.0
+    my $ups_battvoltage_oid = '.1.3.6.1.4.1.318.1.1.1.2.2.8.0';
+    # PowerNet-MIB::upsAdvInputLineVoltage.0
+    my $ups_inputvoltage_oid = '.1.3.6.1.4.1.318.1.1.1.3.2.1.0';
+    # PowerNet-MIB::upsAdvOutputVoltage.0
     my $ups_outputvoltage_oid = '.1.3.6.1.4.1.318.1.1.1.4.2.1.0';
+    # PowerNet-MIB::upsAdvOutputCurrent.0
     my $ups_outputcurrent_oid = '.1.3.6.1.4.1.318.1.1.1.4.2.4.0';
-    my $ups_temp_oid          = '.1.3.6.1.4.1.318.1.1.1.2.2.2.0';
-    my $ups_redundancy_oid    = '.1.3.6.1.4.1.318.1.1.1.4.2.5.0';
+    # PowerNet-MIB::upsAdvBatteryTemperature.0
+    my $ups_temp_oid = '.1.3.6.1.4.1.318.1.1.1.2.2.2.0';
+    # PowerNet-MIB::upsAdvOutputRedundancy.0
+    my $ups_redundancy_oid = '.1.3.6.1.4.1.318.1.1.1.4.2.5.0';
 
     say "snmppoll(): host: $host, community: \"$community\"";
 
