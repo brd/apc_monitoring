@@ -73,8 +73,15 @@ sub snmppoll {
     # OIDs for the UPS
     my $ups_model_oid         = '.1.3.6.1.4.1.318.1.1.1.1.1.1.0';
     my $ups_runtime_oid       = '.1.3.6.1.4.1.318.1.1.1.2.2.3.0';
-    my $ups_lowbatruntime_oid = '.1.3.6.1.4.1.318.1.1.1.5.2.8.0';
+    my $ups_lowbatruntime_oid = '.1.3.6.1.4.1.318.1.1.1.5.2.23.0';
+    my $ups_battstatus_oid    = '.1.3.6.1.4.1.318.1.1.1.2.1.1.0';
+    my $ups_battcapacity_oid  = '.1.3.6.1.4.1.318.1.1.1.2.2.1.0';
+    my $ups_battvoltage_oid   = '.1.3.6.1.4.1.318.1.1.1.2.2.8.0';
+    my $ups_inputvoltage_oid  = '.1.3.6.1.4.1.318.1.1.1.3.2.1.0';
+    my $ups_outputvoltage_oid = '.1.3.6.1.4.1.318.1.1.1.4.2.1.0';
+    my $ups_outputcurrent_oid = '.1.3.6.1.4.1.318.1.1.1.4.2.4.0';
     my $ups_temp_oid          = '.1.3.6.1.4.1.318.1.1.1.2.2.2.0';
+    my $ups_redundancy_oid    = '.1.3.6.1.4.1.318.1.1.1.4.2.5.0';
 
     say "snmppoll(): host: $host, community: \"$community\"";
 
@@ -166,9 +173,42 @@ sub snmppoll {
     # UPS
     elsif ( $snmpresults{$host}{'type'} eq 'ups' ) {
         say "ups model: " . $ups_model->{$ups_model_oid};
-        my $runtime = $session->get_request($ups_runtime_oid);
+        my $runtime       = $session->get_request($ups_runtime_oid);
+        my $lowruntime    = $session->get_request($ups_lowbatruntime_oid);
+        my $temp          = $session->get_request($ups_temp_oid);
+        my $battstatus    = $session->get_request($ups_battstatus_oid);
+        my $battcapacity  = $session->get_request($ups_battcapacity_oid);
+        my $battvoltage   = $session->get_request($ups_battvoltage_oid);
+        my $inputvoltage  = $session->get_request($ups_inputvoltage_oid);
+        my $outputvoltage = $session->get_request($ups_outputvoltage_oid);
+        my $outputcurrent = $session->get_request($ups_outputcurrent_oid);
+        my $redundancy    = $session->get_request($ups_redundancy_oid);
         $snmpresults{$host}{'runtime'} = $runtime->{$ups_runtime_oid};
+        $snmpresults{$host}{'lowruntime'} =
+          $lowruntime->{$ups_lowbatruntime_oid};
+        $snmpresults{$host}{'temp'}       = $temp->{$ups_temp_oid};
+        $snmpresults{$host}{'battstatus'} = $battstatus->{$ups_battstatus_oid};
+        $snmpresults{$host}{'battcapacity'} =
+          $battcapacity->{$ups_battcapacity_oid};
+        $snmpresults{$host}{'battvoltage'} =
+          $battvoltage->{$ups_battvoltage_oid};
+        $snmpresults{$host}{'inputvoltage'} =
+          $inputvoltage->{$ups_inputvoltage_oid};
+        $snmpresults{$host}{'outputvoltage'} =
+          $outputvoltage->{$ups_outputvoltage_oid};
+        $snmpresults{$host}{'outputcurrent'} =
+          $outputcurrent->{$ups_outputcurrent_oid};
+        $snmpresults{$host}{'redundancy'} = $redundancy->{$ups_redundancy_oid};
         say "runtime is: " . $snmpresults{$host}{'runtime'};
+        say "lowruntime is: " . $snmpresults{$host}{'lowruntime'};
+        say "temp is: " . $snmpresults{$host}{'temp'};
+        say "battery status(2=normal): " . $snmpresults{$host}{'battstatus'};
+        say "battery capacity(%): " . $snmpresults{$host}{'battcapacity'};
+        say "battery voltage: " . $snmpresults{$host}{'battvoltage'};
+        say "input line voltage: " . $snmpresults{$host}{'inputvoltage'};
+        say "output voltage: " . $snmpresults{$host}{'outputvoltage'};
+        say "output current(A): " . $snmpresults{$host}{'outputcurrent'};
+        say "redundancy (n+): " . $snmpresults{$host}{'redundancy'};
     }
     else {
         $snmpresults{error}    = 1;
