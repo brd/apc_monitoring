@@ -2,8 +2,6 @@
 
 # need to add
 #	locking with flock
-#	check an snmp value to see if a PDU has 2 banks and respond appropriately
-#	argument checking to run for nagios for a specific host or graphite for all hosts
 
 use v5.10;
 use strict;
