@@ -242,8 +242,13 @@ sub nagios {
     my ( $numofargs, $host, $community ) = @_;
     my %snmpresults = snmppoll( $host, $community );
 
+    if ( $snmpresults{$host}{'error'} != 0 ) {
+        say "error: " . $snmpresults{$host}{'errorstr'};
+        exit $snmpresults{$host}{'error'};
+    }
+
     # PDU
-    if ( $snmpresults{$host}{'type'} eq 'pdu' ) {
+    elsif ( $snmpresults{$host}{'type'} eq 'pdu' ) {
 
         # Check if overload or near overload
         if ( $snmpresults{$host}{'phasecurrent'} >
@@ -274,10 +279,20 @@ sub nagios {
     }
 
     # UPS
-    if ( $snmpresults{$host}{'type'} eq 'ups' ) {
+    elsif ( $snmpresults{$host}{'type'} eq 'ups' ) {
 
         # Check runtime
-        #if(
+        $snmpresults{$host}{'runtime'} =~ s/ minutes.*$//;
+        if ( $snmpresults{$host}{'runtime'} < $snmpresults{$host}{'lowruntime'} ) {
+            $snmpresults{error} = 2;
+            $snmpresults{errorstr} = "Runtime is $snmpresults{$host}{'runtime'}";
+            say "runtime is less than.."
+        }
+    }
+
+    # Nothing to do
+    else {
+        say "Nothing to do.";
     }
 
 }
@@ -323,12 +338,12 @@ sub usage {
     say "Usage:";
     say "	check_apc nagios host [community] warn crit";
     say
-"		Single shot check mode of checking just a single host. If the community";
+      "		Single shot check mode of checking just a single host. If the community";
     say "		name is excluded, the config file will be checked or the \"public\"";
     say "		community will be used instead.";
     say "	check_apc graphite";
     say
-"		Check each host listed in config.pl and send the data into the Graphite";
+      "		Check each host listed in config.pl and send the data into the Graphite";
     say "		host configured in 'config.pl'.";
     exit 1;
 }
