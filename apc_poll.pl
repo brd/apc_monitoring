@@ -258,7 +258,7 @@ sub nagios {
 		}
 		if($snmpresults{$host}{'model'} =~ m/AP79/) {
 			say "phase power is: " . $snmpresults{$host}{'phasepower'};
-			say "phase current is: " . $snmpresults{$host}{'phasepower'};
+			say "phase current is: " . $snmpresults{$host}{'phasecurrent'};
 			say "near overload is: " . $snmpresults{$host}{'nearoverload'};
 			say "overload is: " . $snmpresults{$host}{'overload'};
 		}
