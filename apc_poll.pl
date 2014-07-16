@@ -316,6 +316,11 @@ sub graphite {
 
         my %snmpresults = snmppoll( $host, $community );
 
+		if ( $snmpresults{$host}{'error'} != 0 ) {
+			say "error: " . $snmpresults{$host}{'errorstr'};
+			next;
+		}
+
         # If Graphite
         if ( $graphite_enable == 1 && $graphite_host ) {
 
