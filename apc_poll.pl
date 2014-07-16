@@ -249,20 +249,18 @@ sub nagios {
 
 		# Print $LONGSERVICEOUTPUT$ for Nagios
 		if($snmpresults{$host}{'model'} =~ m/AP89/) {
-			say "phase power is: " . $phase_power->{$phase_power_oid};
-			say "phase current is: "
-				. phase_current->{$phase_current_oid} / 10;
-			say "bank1 current is: " . $bank1_current->{$bank1_oid} / 10;
-			say "bank2 current is: " . $bank2_current->{$bank2_oid} / 10;
-			say "near overload is: " . $nearoverload->{$phase_nearoverload_oid};
-			say "overload is: " . $overload->{$phase_overload_oid};
+			say "phase power is: " . $snmpresults{$host}{'phasepower'};
+			say "phase current is: " . $snmpresults{$host}{'phasecurrent'};
+			say "bank1 current is: " . $snmpresults{$host}{'bank1current'};
+			say "bank2 current is: " . $snmpresults{$host}{'bank2current'};
+			say "near overload is: " . $snmpresults{$host}{'nearoverload'};
+			say "overload is: " . $snmpresults{$host}{'overload'};
 		}
 		if($snmpresults{$host}{'model'} =~ m/AP79/) {
-			say "phase power is: " . $phase_power->{$phase_power_oid};
-			say "phase current is: "
-				. $phase_current->{$phase_current_oid} / 10;
-			say "near overload is: " . $nearoverload->{$phase_nearoverload_oid};
-			say "overload is: " . $overload->{$phase_overload_oid};
+			say "phase power is: " . $snmpresults{$host}{'phasepower'};
+			say "phase current is: " . $snmpresults{$host}{'phasepower'};
+			say "near overload is: " . $snmpresults{$host}{'nearoverload'};
+			say "overload is: " . $snmpresults{$host}{'overload'};
 		}
 		exit $snmpresults{$host}{'returncode'};
 
