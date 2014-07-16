@@ -278,13 +278,26 @@ sub nagios {
     # UPS
     elsif ( $snmpresults{$host}{'type'} eq 'ups' ) {
 
-        # Check runtime
-        $snmpresults{$host}{'runtime'} =~ s/ minutes.*$//;
-        if ( $snmpresults{$host}{'runtime'} < $snmpresults{$host}{'lowruntime'} ) {
+		# Remove the text from the runtime
+		$snmpresults{$host}{'runtimeint'} = $snmpresults{$host}{'runtime'};
+		$snmpresults{$host}{'runtimeint'} =~ s/ minutes.*$//;
+
+		# Check Battery status
+		if ($snmpresults{$host}{'battstatus'} != '2') {
+			say "Trouble with a Battery Module";
+			exit 2;
+		}
+		# Check runtime
+		elsif ( $snmpresults{$host}{'runtimeint'} < $snmpresults{$host}{'lowruntime'} ) {
             $snmpresults{error} = 2;
             $snmpresults{errorstr} = "Runtime is $snmpresults{$host}{'runtime'}";
-            say "runtime is less than.."
+            say "runtime is less than..";
+			exit 1;
         }
+		else {
+			say "UPS OK - Runtime: " . $snmpresults{$host}{'runtime'};
+			exit 0;
+		}
     }
 
     # Nothing to do
