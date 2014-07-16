@@ -15,3 +15,7 @@ Basic usage:
     check_apc graphite
         Check each host listed in config.pl and send the data into the Graphite
         host configured in 'config.pl'.
+
+This script requires Net::SNMP to work.
+
+Install it with: pkg install p5-Net-SNMP
