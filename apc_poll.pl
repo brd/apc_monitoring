@@ -99,8 +99,6 @@ sub snmppoll {
     # PowerNet-MIB::upsAdvOutputRedundancy.0
     my $ups_redundancy_oid = '.1.3.6.1.4.1.318.1.1.1.4.2.5.0';
 
-    say "snmppoll(): host: $host, community: \"$community\"";
-
     my ( $session, $error ) = Net::SNMP->session(
         Hostname  => $host,
         Community => $community,
@@ -188,7 +186,6 @@ sub snmppoll {
 
     # UPS
     elsif ( $snmpresults{$host}{'type'} eq 'ups' ) {
-        say "ups model: " . $ups_model->{$ups_model_oid};
         my $runtime       = $session->get_request($ups_runtime_oid);
         my $lowruntime    = $session->get_request($ups_lowbatruntime_oid);
         my $temp          = $session->get_request($ups_temp_oid);
@@ -215,16 +212,6 @@ sub snmppoll {
         $snmpresults{$host}{'outputcurrent'} =
           $outputcurrent->{$ups_outputcurrent_oid};
         $snmpresults{$host}{'redundancy'} = $redundancy->{$ups_redundancy_oid};
-        say "runtime is: " . $snmpresults{$host}{'runtime'};
-        say "lowruntime is: " . $snmpresults{$host}{'lowruntime'};
-        say "temp is: " . $snmpresults{$host}{'temp'};
-        say "battery status(2=normal): " . $snmpresults{$host}{'battstatus'};
-        say "battery capacity(%): " . $snmpresults{$host}{'battcapacity'};
-        say "battery voltage: " . $snmpresults{$host}{'battvoltage'};
-        say "input line voltage: " . $snmpresults{$host}{'inputvoltage'};
-        say "output voltage: " . $snmpresults{$host}{'outputvoltage'};
-        say "output current(A): " . $snmpresults{$host}{'outputcurrent'};
-        say "redundancy (n+): " . $snmpresults{$host}{'redundancy'};
     }
     else {
         $snmpresults{error}    = 1;
@@ -285,19 +272,32 @@ sub nagios {
 		# Check Battery status
 		if ($snmpresults{$host}{'battstatus'} != '2') {
 			say "Trouble with a Battery Module";
-			exit 2;
+			$snmpresults{$host}{'returncode'} = 2;
 		}
 		# Check runtime
 		elsif ( $snmpresults{$host}{'runtimeint'} < $snmpresults{$host}{'lowruntime'} ) {
             $snmpresults{error} = 2;
             $snmpresults{errorstr} = "Runtime is $snmpresults{$host}{'runtime'}";
             say "runtime is less than..";
-			exit 1;
+			$snmpresults{$host}{'returncode'} = 1;
         }
 		else {
 			say "UPS OK - Runtime: " . $snmpresults{$host}{'runtime'};
-			exit 0;
+			$snmpresults{$host}{'returncode'} = 0;
 		}
+
+		# Print $LONGSERVICEOUTPUT$ for Nagios
+		say "runtime is: " . $snmpresults{$host}{'runtime'};
+		say "lowruntime is: " . $snmpresults{$host}{'lowruntime'};
+		say "temp is: " . $snmpresults{$host}{'temp'};
+		say "battery status(2=normal): " . $snmpresults{$host}{'battstatus'};
+		say "battery capacity(%): " . $snmpresults{$host}{'battcapacity'};
+		say "battery voltage: " . $snmpresults{$host}{'battvoltage'};
+		say "input line voltage: " . $snmpresults{$host}{'inputvoltage'};
+		say "output voltage: " . $snmpresults{$host}{'outputvoltage'};
+		say "output current(A): " . $snmpresults{$host}{'outputcurrent'};
+		say "redundancy (n+): " . $snmpresults{$host}{'redundancy'};
+		exit $snmpresults{$host}{'returncode'};
     }
 
     # Nothing to do
