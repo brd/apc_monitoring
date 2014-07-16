@@ -314,7 +314,7 @@ sub nagios {
 sub graphite {
     while ( my ( $host, $community ) = each %hostlist ) {
 
-        my $session = snmppoll( $host, $community );
+        my %snmpresults = snmppoll( $host, $community );
 
         # If Graphite
         if ( $graphite_enable == 1 && $graphite_host ) {
@@ -327,23 +327,28 @@ sub graphite {
                 PeerPort => 2003,
             ) or die "Cannot connect: $!";
 
-# Write the data to graphite
-#print $client "$graphite_path.$host.watts "   . $phase_power->{$phase_power_oid}          . " " . $epoch . "\n";
-#print $client "$graphite_path.$host.current " . $phase_current->{$phase_current_oid} / 10 . " " . $epoch . "\n";
-#print $client "$graphite_path.$host.bank1 "   . $bank1_current->{$bank1_oid} / 10         . " " . $epoch . "\n";
-#print $client "$graphite_path.$host.bank2 "   . $bank2_current->{$bank2_oid} / 10         . " " . $epoch . "\n";
+			# Write the data to graphite
+			if($snmpresults{$host}{'type'} eq 'ups') {
+				print $client "$graphite_path.$host.runtime " . $snmpresults{$host}{'runtime'} . " " . $epoch . "\n";
+				print $client "$graphite_path.$host.percentcapacity " . $snmpresults{$host}{'battcapacity'} . " " . $epoch . "\n";
+				print $client "$graphite_path.$host.battvoltage " . $snmpresults{$host}{'battvoltage'} . " " . $epoch . "\n";
+				print $client "$graphite_path.$host.battcapacity " . $snmpresults{$host}{'battcapacity'} . " " . $epoch . "\n";
+				print $client "$graphite_path.$host.inputvoltage " . $snmpresults{$host}{'inputvoltage'} . " " . $epoch . "\n";
+				print $client "$graphite_path.$host.outputvoltage " . $snmpresults{$host}{'outputvoltage'} . " " . $epoch . "\n";
+				print $client "$graphite_path.$host.outputcurrent " . $snmpresults{$host}{'outputcurrent'} . " " . $epoch . "\n";
+			}
+			elsif($snmpresults{$host}{'type'} eq 'pdu') {
+				print $client "$graphite_path.$host.watts " . $snmpresults{$host}{'phasepower'} . " " . $epoch . "\n";
+				print $client "$graphite_path.$host.current " . $snmpresults{$host}{'phasecurrent'} . " " . $epoch . "\n";
+				if( =~ m/AP89/) {
+					print $client "$graphite_path.$host.bank1 " . $snmpresults{$host}{'bank1current'} . " " . $epoch . "\n";
+					print $client "$graphite_path.$host.bank2 " . $snmpresults{$host}{'bank2current'} . " " . $epoch . "\n";
+				}
+			}
+
+			# Close the connection to the Graphite server
             close $client;
         }
-
-        # If debugging is enabled
-        if ( $debug == 1 && $debug ) {
-
-#print "$graphite_path.$host.watts "   . $phase_power->{$phase_power_oid}          . " " . $epoch . "\n";
-#print "$graphite_path.$host.current " . $phase_current->{$phase_current_oid} / 10 . " " . $epoch . "\n";
-#print "$graphite_path.$host.bank1 "   . $bank1_current->{$bank1_oid} / 10         . " " . $epoch . "\n";
-#print "$graphite_path.$host.bank2 "   . $bank2_current->{$bank2_oid} / 10         . " " . $epoch . "\n";
-        }
-
         $session->close();
     }
 }
