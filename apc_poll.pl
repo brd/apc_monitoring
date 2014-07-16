@@ -312,9 +312,9 @@ sub nagios {
 }
 
 sub graphite {
-    while ( my ( $host, $community ) = each %hostlist ) {
+    while ( my $host = each %hostlist ) {
 
-        my %snmpresults = snmppoll( $host, $community );
+        my %snmpresults = snmppoll( $host, $hostlist{$host}{community} );
 
 		if ( $snmpresults{$host}{'error'} != 0 ) {
 			say "error: " . $snmpresults{$host}{'errorstr'};
