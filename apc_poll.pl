@@ -20,6 +20,8 @@ if ( $args == 0 ) {
 }
 elsif ( $args == 1 ) {
     if ( $ARGV[0] eq "graphite" ) {
+		# Include the config
+		require 'config.pl' or die "Unable to open config.pl: $!";
         graphite();
     }
     else {
@@ -48,9 +50,6 @@ else {
 
 # Predefine variables
 our ( %hostlist, $debug, $graphite_enable, $graphite_host, $graphite_path );
-
-# Include the config
-require 'config.pl' or die "Unable to open config.pl: $!";
 
 # The Current Epoch time
 my $epoch = time;
