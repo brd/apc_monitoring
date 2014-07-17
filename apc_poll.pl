@@ -10,6 +10,12 @@ use Net::SNMP;
 use IO::Socket;
 no warnings 'uninitialized';
 
+# The Current Epoch time
+my $epoch = time;
+
+# Predefine variables
+our ( %hostlist, $debug, $graphite_enable, $graphite_host, $graphite_path );
+
 # Check which mode we are running in
 # Nagios or Graphite
 my $args = $#ARGV + 1;
@@ -45,12 +51,6 @@ elsif ( $args == 2 || $args == 3 ) {
 else {
     usage();
 }
-
-# Predefine variables
-our ( %hostlist, $debug, $graphite_enable, $graphite_host, $graphite_path );
-
-# The Current Epoch time
-my $epoch = time;
 
 sub snmppoll {
 
