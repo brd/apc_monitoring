@@ -324,6 +324,11 @@ sub graphite {
 			next;
 		}
 
+		# Flatten SNMP host name
+		my $snmphost = $host;
+		$snmphost =~ s/\.$//;
+		$snmphost =~ s/\./_/g;
+
         # If Graphite
         if ( $graphite_enable == 1 && $graphite_host ) {
 
@@ -337,20 +342,20 @@ sub graphite {
 
 			# Write the data to graphite
 			if($snmpresults{$host}{'type'} eq 'ups') {
-				say $client "$graphite_path.$host.runtime " . $snmpresults{$host}{'runtime'} . " " . $epoch;
-				say $client "$graphite_path.$host.percentcapacity " . $snmpresults{$host}{'battcapacity'} . " " . $epoch;
-				say $client "$graphite_path.$host.battvoltage " . $snmpresults{$host}{'battvoltage'} . " " . $epoch;
-				say $client "$graphite_path.$host.battcapacity " . $snmpresults{$host}{'battcapacity'} . " " . $epoch;
-				say $client "$graphite_path.$host.inputvoltage " . $snmpresults{$host}{'inputvoltage'} . " " . $epoch;
-				say $client "$graphite_path.$host.outputvoltage " . $snmpresults{$host}{'outputvoltage'} . " " . $epoch;
-				say $client "$graphite_path.$host.outputcurrent " . $snmpresults{$host}{'outputcurrent'} . " " . $epoch;
+				say $client "$graphite_path.$snmphost.runtime " . $snmpresults{$host}{'runtime'} . " " . $epoch;
+				say $client "$graphite_path.$snmphost.percentcapacity " . $snmpresults{$host}{'battcapacity'} . " " . $epoch;
+				say $client "$graphite_path.$snmphost.battvoltage " . $snmpresults{$host}{'battvoltage'} . " " . $epoch;
+				say $client "$graphite_path.$snmphost.battcapacity " . $snmpresults{$host}{'battcapacity'} . " " . $epoch;
+				say $client "$graphite_path.$snmphost.inputvoltage " . $snmpresults{$host}{'inputvoltage'} . " " . $epoch;
+				say $client "$graphite_path.$snmphost.outputvoltage " . $snmpresults{$host}{'outputvoltage'} . " " . $epoch;
+				say $client "$graphite_path.$snmphost.outputcurrent " . $snmpresults{$host}{'outputcurrent'} . " " . $epoch;
 			}
 			elsif($snmpresults{$host}{'type'} eq 'pdu') {
-				say $client "$graphite_path.$host.watts " . $snmpresults{$host}{'phasepower'} . " " . $epoch;
-				say $client "$graphite_path.$host.current " . $snmpresults{$host}{'phasecurrent'} . " " . $epoch;
+				say $client "$graphite_path.$snmphost.watts " . $snmpresults{$host}{'phasepower'} . " " . $epoch;
+				say $client "$graphite_path.$snmphost.current " . $snmpresults{$host}{'phasecurrent'} . " " . $epoch;
 				if($snmpresults{$host}{'model'} =~ m/AP89/) {
-					say $client "$graphite_path.$host.bank1 " . $snmpresults{$host}{'bank1current'} . " " . $epoch;
-					say $client "$graphite_path.$host.bank2 " . $snmpresults{$host}{'bank2current'} . " " . $epoch;
+					say $client "$graphite_path.$snmphost.bank1 " . $snmpresults{$host}{'bank1current'} . " " . $epoch;
+					say $client "$graphite_path.$snmphost.bank2 " . $snmpresults{$host}{'bank2current'} . " " . $epoch;
 				}
 			}
 
