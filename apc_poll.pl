@@ -204,6 +204,9 @@ sub snmppoll {
         $snmpresults{errorstr} = "Unable to poll $host";
     }
 
+	# Close the SNMP Session
+	$session->close();
+
     return %snmpresults;
 }
 
@@ -345,7 +348,7 @@ sub graphite {
 			elsif($snmpresults{$host}{'type'} eq 'pdu') {
 				print $client "$graphite_path.$host.watts " . $snmpresults{$host}{'phasepower'} . " " . $epoch . "\n";
 				print $client "$graphite_path.$host.current " . $snmpresults{$host}{'phasecurrent'} . " " . $epoch . "\n";
-				if( =~ m/AP89/) {
+				if($snmpresults{$host}{'model'} =~ m/AP89/) {
 					print $client "$graphite_path.$host.bank1 " . $snmpresults{$host}{'bank1current'} . " " . $epoch . "\n";
 					print $client "$graphite_path.$host.bank2 " . $snmpresults{$host}{'bank2current'} . " " . $epoch . "\n";
 				}
@@ -354,7 +357,6 @@ sub graphite {
 			# Close the connection to the Graphite server
             close $client;
         }
-        $session->close();
     }
 }
 
