@@ -71,9 +71,9 @@ sub snmppoll {
     # PowerNet-MIB::rPDULoadStatusLoad.3
     my $bank2_oid = '.1.3.6.1.4.1.318.1.1.12.2.3.1.1.2.3';
     # PowerNet-MIB::rPDULoadPhaseConfigOverloadThreshold.phase1
-    my $phase_nearoverload_oid = '.1.3.6.1.4.1.318.1.1.12.2.2.1.1.4.1';
+    my $phase_overload_oid = '.1.3.6.1.4.1.318.1.1.12.2.2.1.1.4.1';
     # PowerNet-MIB::rPDULoadPhaseConfigNearOverloadThreshold.phase1
-    my $phase_overload_oid = '.1.3.6.1.4.1.318.1.1.12.2.2.1.1.3.1';
+    my $phase_nearoverload_oid = '.1.3.6.1.4.1.318.1.1.12.2.2.1.1.3.1';
 
     # OIDs for the UPS
     # PowerNet-MIB::upsBasicIdentModel.0
