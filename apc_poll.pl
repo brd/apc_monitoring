@@ -328,7 +328,7 @@ sub graphite {
         if ( $graphite_enable == 1 && $graphite_host ) {
 
             # Open connection
-            print "sending $host data to graphite..";
+            say "sending $host data to graphite..";
             my $client = IO::Socket::INET->new(
                 Proto    => 'tcp',
                 PeerAddr => $graphite_host,
@@ -337,20 +337,20 @@ sub graphite {
 
 			# Write the data to graphite
 			if($snmpresults{$host}{'type'} eq 'ups') {
-				print $client "$graphite_path.$host.runtime " . $snmpresults{$host}{'runtime'} . " " . $epoch . "\n";
-				print $client "$graphite_path.$host.percentcapacity " . $snmpresults{$host}{'battcapacity'} . " " . $epoch . "\n";
-				print $client "$graphite_path.$host.battvoltage " . $snmpresults{$host}{'battvoltage'} . " " . $epoch . "\n";
-				print $client "$graphite_path.$host.battcapacity " . $snmpresults{$host}{'battcapacity'} . " " . $epoch . "\n";
-				print $client "$graphite_path.$host.inputvoltage " . $snmpresults{$host}{'inputvoltage'} . " " . $epoch . "\n";
-				print $client "$graphite_path.$host.outputvoltage " . $snmpresults{$host}{'outputvoltage'} . " " . $epoch . "\n";
-				print $client "$graphite_path.$host.outputcurrent " . $snmpresults{$host}{'outputcurrent'} . " " . $epoch . "\n";
+				say $client "$graphite_path.$host.runtime " . $snmpresults{$host}{'runtime'} . " " . $epoch;
+				say $client "$graphite_path.$host.percentcapacity " . $snmpresults{$host}{'battcapacity'} . " " . $epoch;
+				say $client "$graphite_path.$host.battvoltage " . $snmpresults{$host}{'battvoltage'} . " " . $epoch;
+				say $client "$graphite_path.$host.battcapacity " . $snmpresults{$host}{'battcapacity'} . " " . $epoch;
+				say $client "$graphite_path.$host.inputvoltage " . $snmpresults{$host}{'inputvoltage'} . " " . $epoch;
+				say $client "$graphite_path.$host.outputvoltage " . $snmpresults{$host}{'outputvoltage'} . " " . $epoch;
+				say $client "$graphite_path.$host.outputcurrent " . $snmpresults{$host}{'outputcurrent'} . " " . $epoch;
 			}
 			elsif($snmpresults{$host}{'type'} eq 'pdu') {
-				print $client "$graphite_path.$host.watts " . $snmpresults{$host}{'phasepower'} . " " . $epoch . "\n";
-				print $client "$graphite_path.$host.current " . $snmpresults{$host}{'phasecurrent'} . " " . $epoch . "\n";
+				say $client "$graphite_path.$host.watts " . $snmpresults{$host}{'phasepower'} . " " . $epoch;
+				say $client "$graphite_path.$host.current " . $snmpresults{$host}{'phasecurrent'} . " " . $epoch;
 				if($snmpresults{$host}{'model'} =~ m/AP89/) {
-					print $client "$graphite_path.$host.bank1 " . $snmpresults{$host}{'bank1current'} . " " . $epoch . "\n";
-					print $client "$graphite_path.$host.bank2 " . $snmpresults{$host}{'bank2current'} . " " . $epoch . "\n";
+					say $client "$graphite_path.$host.bank1 " . $snmpresults{$host}{'bank1current'} . " " . $epoch;
+					say $client "$graphite_path.$host.bank2 " . $snmpresults{$host}{'bank2current'} . " " . $epoch;
 				}
 			}
 
