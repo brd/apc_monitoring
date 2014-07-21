@@ -200,8 +200,8 @@ sub snmppoll {
         $snmpresults{$host}{'redundancy'} = $redundancy->{$ups_redundancy_oid};
     }
     else {
-        $snmpresults{error}    = 1;
-        $snmpresults{errorstr} = "Unable to poll $host";
+        $snmpresults{$host}{error}    = 3;
+        $snmpresults{$host}{errorstr} = "Unable to poll $host";
     }
 
 	# Close the SNMP Session
