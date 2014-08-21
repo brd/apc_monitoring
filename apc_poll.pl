@@ -333,7 +333,6 @@ sub graphite {
         if ( $graphite_enable == 1 && $graphite_host ) {
 
             # Open connection
-            say "sending $host data to graphite..";
             my $client = IO::Socket::INET->new(
                 Proto    => 'tcp',
                 PeerAddr => $graphite_host,
